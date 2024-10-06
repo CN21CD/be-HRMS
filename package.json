@@ -18,8 +18,9 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
-    "mssql": "^11.0.1",
+    "moment-timezone": "^0.5.45",
     "path": "^0.12.7",
+    "pg": "^8.13.0",
     "tedious": "^18.3.0"
   },
   "devDependencies": {

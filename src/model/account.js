@@ -1,35 +1,58 @@
-const sql = require('mssql');
+const { Client } = require('pg');
+const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
+const moment = require('moment-timezone'); 
+const { config } = require('../../config/dbconfig');
 
-const config = {
-  user: 'your_username',
-  password: 'your_password',
-  server: 'your_server',
-  database: 'HRMSbyCN21CD'
-};
+async function createAccount(account) {
+  const client = new Client(config);
+  await client.connect();
 
-async function getUserByEmail(email) {
-  let pool = await sql.connect(config);
-  let result = await pool.request()
-    .input('email', sql.NVarChar(50), email)
-    .query('SELECT * FROM user_account WHERE account_email = @email');
-  return result.recordset[0];
+  const hashedPassword = await bcrypt.hash(account.password, 10);
+  const createDate = moment().tz('Asia/Bangkok').format(); // Lấy ngày tạo trên internet theo múi giờ +7
+  const query = `
+    INSERT INTO user_account (account_id, account_name, account_email, account_userinfo_id, account_password, account_createDate, account_role)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+  `;
+  const values = [
+    uuidv4().substring(0, 30),
+    account.name.substring(0, 30), 
+    account.email.substring(0, 30), 
+    account.userinfo_id.substring(0, 30), 
+    hashedPassword.substring(0, 30), 
+    createDate,
+    account.role.substring(0, 30)
+  ];
+
+  try {
+    await client.query(query, values);
+  } catch (err) {
+    console.error('Error creating account:', err);
+    throw err; 
+  } finally {
+    await client.end();
+  }
 }
 
-async function createUser(account) {
-  let pool = await sql.connect(config);
-  await pool.request()
-    .input('account_id', sql.NVarChar(30), account.account_id)
-    .input('account_name', sql.NVarChar(30), account.account_name)
-    .input('account_email', sql.NVarChar(50), account.account_email)
-    .input('account_userinfo_id', sql.NVarChar(30), account.account_userinfo_id)
-    .input('account_password', sql.NVarChar(sql.MAX), account.account_password)
-    .input('account_createDate', sql.Date, account.account_createDate)
-    .input('account_role', sql.NVarChar, account.account_role)
-    .query(`INSERT INTO user_account (account_id, account_name, account_email, account_userinfo_id, account_password, account_createDate, account_role)
-            VALUES (@account_id, @account_name, @account_email, @account_userinfo_id, @account_password, @account_createDate, @account_role)`);
+async function getAccountByEmail(email) {
+  const client = new Client(config);
+  await client.connect();
+
+  const query = 'SELECT * FROM user_account WHERE account_email = $1';
+  const values = [email];
+
+  try {
+    const res = await client.query(query, values);
+    return res.rows[0];
+  } catch (err) {
+    console.error('Error fetching account:', err);
+    throw err;
+  } finally {
+    await client.end();
+  }
 }
 
 module.exports = {
-  getUserByEmail,
-  createUser
+  createAccount,
+  getAccountByEmail
 };

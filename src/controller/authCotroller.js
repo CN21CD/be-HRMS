@@ -1,3 +1,4 @@
+require('dotenv').config();
 const accountService = require('../model/account');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -17,12 +18,24 @@ async function login(req, res) {
   const { email, password } = req.body;
   try {
     const account = await accountService.getAccountByEmail(email);
-    if (account && await bcrypt.compare(password, account.account_password)) {
-      const token = jwt.sign({ userId: account.account_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.json({ token });
-    } else {
-      res.status(401).send('Invalid email or password');
+    if (!account) {
+      console.error('Account not found for email:', email);
+      return res.status(401).send('Invalid email or password');
     }
+
+    console.log('Account found:', account);
+
+    const isPasswordValid = await bcrypt.compare(password, account.account_password);
+    console.log('Password comparison result:', isPasswordValid);
+    if (!isPasswordValid) {
+      console.error('Invalid password for email:', email);
+      return res.status(401).send('Invalid email or password');
+    }
+    const secretOrPrivateKey = process.env.SECRET_KEY;
+    console.log('secretOrPrivateKey:', secretOrPrivateKey);
+    
+    const token = jwt.sign({ userId: account.account_id },"hrms@2024_10!06", { expiresIn: '1h' });
+    res.json({ token });
   } catch (err) {
     console.error('Error logging in:', err);
     res.status(500).send('Error logging in');

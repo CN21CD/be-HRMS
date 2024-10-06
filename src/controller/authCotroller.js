@@ -32,9 +32,7 @@ async function login(req, res) {
       return res.status(401).send('Invalid email or password');
     }
     const secretOrPrivateKey = process.env.SECRET_KEY;
-    console.log('secretOrPrivateKey:', secretOrPrivateKey);
-    
-    const token = jwt.sign({ userId: account.account_id },"hrms@2024_10!06", { expiresIn: '1h' });
+    const token = jwt.sign({ userId: account.account_id },secretOrPrivateKey, { expiresIn: '1h' });
     res.json({ token });
   } catch (err) {
     console.error('Error logging in:', err);

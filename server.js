@@ -16,7 +16,10 @@ app.use((err, req, res, next) => {
 });
 
 app.use('/api/auth', authRouter);
-
+// New GET endpoint
+app.get("/api/data", (req, res) => {
+  res.json({ message: "Hello, this is your data!" });
+});
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
 //app.listen(port, hostname, () => {

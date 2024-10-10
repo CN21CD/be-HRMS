@@ -15,25 +15,24 @@ async function createAccount(account) {
     VALUES ($1, $2, $3, $4, $5, $6, $7)
   `;
   const values = [
-    uuidv4().substring(0, 30), // Ensure UUID is within 30 characters
-    account.name.substring(0, 30), // Ensure name is within 30 characters
-    account.email.substring(0, 30), // Ensure email is within 30 characters
-    account.userinfo_id.substring(0, 30), // Ensure userinfo_id is within 30 characters
-    hashedPassword, // Sử dụng mật khẩu đã băm
-    createDate, // Sử dụng ngày tạo theo múi giờ +7
-    account.role.substring(0, 30) // Ensure role is within 30 characters
+    uuidv4().substring(0, 30), 
+    account.name.substring(0, 30),
+    account.email.substring(0, 30), 
+    account.userinfo_id.substring(0, 30), 
+    hashedPassword, 
+    createDate, 
+    account.role.substring(0, 30) 
   ];
 
   try {
     await client.query(query, values);
   } catch (err) {
     console.error('Error creating account:', err);
-    throw err; // Re-throw the error to be caught in the controller
+    throw err;
   } finally {
     await client.end();
   }
 }
-
 
 async function getAccountByEmail(email) {
   const client = new Client(config);
@@ -51,7 +50,7 @@ async function getAccountByEmail(email) {
     return res.rows[0];
   } catch (err) {
     console.error('Error fetching account:', err);
-    throw err; // Re-throw the error to be caught in the controller
+    throw err;
   } finally {
     await client.end();
   }

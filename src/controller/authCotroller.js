@@ -22,9 +22,7 @@ async function login(req, res) {
       console.error('Account not found for email:', email);
       return res.status(401).send('Invalid email or password');
     }
-
-    console.log('Account found:', account);
-
+    console.log('Logged in account:', account);
     const isPasswordValid = await bcrypt.compare(password, account.account_password);
     console.log('Password comparison result:', isPasswordValid);
     if (!isPasswordValid) {

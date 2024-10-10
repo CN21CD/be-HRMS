@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const authRouter = require('./src/router/authRouter');
 
 const app = express();
-const hostname = process.env.HOSTNAME || 'localhost';
-const port = process.env.PORT || 3000;
+const hostname = process.env.HOSTNAME;
+const port = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

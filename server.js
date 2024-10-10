@@ -19,6 +19,6 @@ app.use('/api/auth', authRouter);
 
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+//app.listen(port, hostname, () => {
+ // console.log(`Server running at http://${hostname}:${port}/`);
+//});

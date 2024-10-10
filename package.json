@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "nodemon databaseconnectionTest.js"
+    "test": "nodemon databaseconnectionTest.js",
+    "vercel-start": "node server.js"
   },
   "author": "",
   "license": "ISC",

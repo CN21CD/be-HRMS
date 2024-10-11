@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const authRouter = require('./src/router/authRouter');
 
 const app = express();
-const hostname = process.env.HOSTNAME || 'localhost';
-const port = process.env.PORT || 3000;
+const hostname ='localhost';
+const port =8000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,12 +17,9 @@ app.use((err, req, res, next) => {
 
 app.use('/api/auth', authRouter);
 
-// New GET endpoint
-app.get("/api/data", (req, res) => {
+app.get("/api", (req, res) => {
   res.json({ message: "Hello, this is your data!" });
 });
-app.get("/", (req, res) => res.send("Express on Vercel"));
-
-//app.listen(port, hostname, () => {
- // console.log(`Server running at http://${hostname}:${port}/`);
-//});
+app.listen(port, hostname, () => {
+ console.log(`Server running at http://${hostname}:${port}/`);
+});

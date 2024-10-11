@@ -14,7 +14,7 @@ async function register(req, res) {
   }
 }
 
-async function login(req, res) {
+async function login(req, res, next) {
   const { email, password } = req.body;
   try {
     const account = await accountService.getAccountByEmail(email);
@@ -24,21 +24,48 @@ async function login(req, res) {
     }
     console.log('Logged in account:', account);
     const isPasswordValid = await bcrypt.compare(password, account.account_password);
-    console.log('Password comparison result:', isPasswordValid);
     if (!isPasswordValid) {
       console.error('Invalid password for email:', email);
       return res.status(401).send('Invalid email or password');
     }
     const secretOrPrivateKey = process.env.SECRET_KEY;
-    const token = jwt.sign({ userId: account.account_id },secretOrPrivateKey, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: account.account_id }, secretOrPrivateKey, { expiresIn: '1h' });
+    
+    // Add account_id to request body for logLoginHistory middleware
+    req.body.account_id = account.account_id;
+
     res.json({ token });
+    next();
   } catch (err) {
     console.error('Error logging in:', err);
     res.status(500).send('Error logging in');
   }
 }
 
+async function getLoginHistory(req, res) {
+  try {
+    const history = await accountService.getLoginHistory();
+    res.json(history);
+  } catch (err) {
+    console.error('Error fetching login history:', err);
+    res.status(500).send('Error fetching login history');
+  }
+}
+
+async function getLoginHistoryById(req, res) {
+  const { account_id } = req.params;
+  try {
+    const history = await accountService.getLoginHistoryByAccountId(account_id);
+    res.json(history);
+  } catch (err) {
+    console.error('Error fetching login history:', err);
+    res.status(500).send('Error fetching login history');
+  }
+}
+
 module.exports = {
   register,
-  login
+  login,
+  getLoginHistory,
+  getLoginHistoryById
 };

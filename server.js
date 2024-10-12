@@ -18,7 +18,7 @@ app.use((err, req, res, next) => {
 app.use('/api/auth', authRouter);
 
 app.get("/api", (req, res) => {
-  res.json({ message: "Hello, this is your data!" });
+  res.json({ message: "Wellcome HRMS API by XiamTeam" });
 });
 app.listen(port, hostname, () => {
  console.log(`Server running at http://${hostname}:${port}/`);

@@ -15,18 +15,18 @@ async function register(req, res) {
 }
 
 async function login(req, res, next) {
-  const { email, password } = req.body;
+  const { identifier, password } = req.body; // identifier can be either username or email
   try {
-    const account = await accountService.getAccountByEmail(email);
+    const account = await accountService.getAccountByEmailOrUsername(identifier);
     if (!account) {
-      console.error('Account not found for email:', email);
-      return res.status(401).send('Invalid email or password');
+      console.error('Account not found for identifier:', identifier);
+      return res.status(401).send('Invalid username/email or password');
     }
     console.log('Logged in account:', account);
     const isPasswordValid = await bcrypt.compare(password, account.account_password);
     if (!isPasswordValid) {
-      console.error('Invalid password for email:', email);
-      return res.status(401).send('Invalid email or password');
+      console.error('Invalid password for identifier:', identifier);
+      return res.status(401).send('Invalid username/email or password');
     }
     const secretOrPrivateKey = process.env.SECRET_KEY;
     const token = jwt.sign({ userId: account.account_id }, secretOrPrivateKey, { expiresIn: '1h' });

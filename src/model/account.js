@@ -34,17 +34,17 @@ async function createAccount(account) {
   }
 }
 
-async function getAccountByEmail(email) {
+async function getAccountByEmailOrUsername(identifier) {
   const client = new Client(config);
   await client.connect();
 
-  const query = 'SELECT * FROM user_account WHERE account_email = $1';
-  const values = [email];
+  const query = 'SELECT * FROM user_account WHERE account_email = $1 OR account_name = $2';
+  const values = [identifier, identifier];
 
   try {
     const res = await client.query(query, values);
     if (res.rows.length === 0) {
-      console.error('No account found with email:', email);
+      console.error('No account found with identifier:', identifier);
       return null;
     }
     return res.rows[0];
@@ -93,7 +93,7 @@ async function getLoginHistoryByAccountId(account_id) {
 
 module.exports = {
   createAccount,
-  getAccountByEmail,
+  getAccountByEmailOrUsername,
   getLoginHistory,
   getLoginHistoryByAccountId
 };

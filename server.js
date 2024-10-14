@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const authRouter = require('./src/router/authRouter');
+const companyRouter = require('./src/router/companyRouter');
 
 const app = express();
 const hostname ='localhost';
@@ -16,6 +17,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/data', companyRouter);
 
 app.get("/api", (req, res) => {
   res.json({ message: "Hello, this is your data!" });

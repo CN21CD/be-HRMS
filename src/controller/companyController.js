@@ -23,17 +23,17 @@ async function getCompanyById(req, res) {
         return res.status(500).send('Error fetching companyID');
     }
 }
-async function addCompany(req,res){
-    const {company_name,company_phonenumber,company_email,company_address} = req.body;
-    try{
-        const newcompany = await company.addCompany({company_name,company_phonenumber,company_email,company_address});
-        return res.status(201).send('Company adding successfully');
-        // return res.status(201).json(newcompany);
-    }catch(err){
-        console.error('Error adding company:', err);
-        return res.status(500).send('Error adding company');
-    }
-}
+// async function addCompany(req,res){
+//     const {company_name,company_phonenumber,company_email,company_address} = req.body;
+//     try{
+//         const newcompany = await company.addCompany({company_name,company_phonenumber,company_email,company_address});
+//         return res.status(201).send('Company adding successfully');
+//         // return res.status(201).json(newcompany);
+//     }catch(err){
+//         console.error('Error adding company:', err);
+//         return res.status(500).send('Error adding company');
+//     }
+// }
 async function updateCompanyByID(req,res){
     const company_id = req.params.id;
     const {company_name,company_phonenumber,company_email,company_address} = req.body;
@@ -45,21 +45,21 @@ async function updateCompanyByID(req,res){
         res.status(500).send('Error updating company');
     }
 }
-async function deleteCompanyByID(req,res){
-    const company_id = req.params.id;
-    try{
-        const deleteCompany = await company.deleteCompanyByID(company_id);
-        res.status(201).send('Company deleted successfully');
-    }catch(err){
-        console.error('Error deleting company:', err);
-        res.status(500).send('Error deleting company');
-    }
-}
+// async function deleteCompanyByID(req,res){
+//     const company_id = req.params.id;
+//     try{
+//         const deleteCompany = await company.deleteCompanyByID(company_id);
+//         res.status(201).send('Company deleted successfully');
+//     }catch(err){
+//         console.error('Error deleting company:', err);
+//         res.status(500).send('Error deleting company');
+//     }
+// }
 
 module.exports = {
     getAllCompanies,
     getCompanyById,
-    addCompany,
+    // addCompany,
     updateCompanyByID,
-    deleteCompanyByID
+    // deleteCompanyByID
 };

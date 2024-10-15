@@ -17,8 +17,10 @@ client.on('end', () => {
 });
 
 async function redisConnect() {
-    await client.connect();
-    console.log('Redis client connected');
+    if (!client.isOpen) {
+        await client.connect();
+        console.log('Redis client connected');
+    }
 }
 
 module.exports = { client, redisConnect };

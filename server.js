@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const authRouter = require('./src/router/authRouter');
 const companyRouter = require('./src/router/companyRouter');
-
+const userRouter = require('./src/router/userRouter');
 const app = express();
 const hostname ='localhost';
 const port =8000;
@@ -18,6 +18,7 @@ app.use((err, req, res, next) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/data', companyRouter);
+app.use('/api/data', userRouter);
 
 app.get("/api", (req, res) => {
   res.json({ message: "Wellcome HRMS API by XiamTeam" });

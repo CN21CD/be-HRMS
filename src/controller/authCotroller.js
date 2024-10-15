@@ -4,9 +4,27 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 async function register(req, res) {
-  const { name, email, password, userinfo_id, role } = req.body;
+  const { name, email, password, role, company, userinfo } = req.body;
   try {
-    await accountService.createAccount({ name, email, password, userinfo_id, role });
+    await accountService.createAccount({
+      name,
+      email,
+      password,
+      role,
+      company: {
+        name: company.name,
+        phonenumber: company.phonenumber,
+        email: company.email,
+        address: company.address
+      },
+      userinfo: {
+        fullname: userinfo.fullname,
+        birthday: userinfo.birthday,
+        email: userinfo.email,
+        address: userinfo.address,
+        phonenumber: userinfo.phonenumber
+      }
+    });
     res.status(201).send('Account created successfully');
   } catch (err) {
     console.error('Error creating account:', err);
@@ -15,7 +33,7 @@ async function register(req, res) {
 }
 
 async function login(req, res, next) {
-  const { identifier, password } = req.body; // identifier can be either username or email
+  const { identifier, password } = req.body; 
   try {
     const account = await accountService.getAccountByEmailOrUsername(identifier);
     if (!account) {
@@ -63,9 +81,21 @@ async function getLoginHistoryById(req, res) {
   }
 }
 
+async function deleteAccount(req, res) {
+  const { account_id } = req.params;
+  try {
+    await accountService.deleteAccount(account_id);
+    res.status(200).send('Account deleted successfully');
+  } catch (err) {
+    console.error('Error deleting account:', err);
+    res.status(500).send('Error deleting account');
+  }
+}
+
 module.exports = {
   register,
   login,
   getLoginHistory,
-  getLoginHistoryById
+  getLoginHistoryById,
+  deleteAccount
 };

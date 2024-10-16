@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const path = require('path');
 const authRouter = require('./src/router/accountRouter');
 const companyRouter = require('./src/router/companyRouter');
@@ -10,6 +11,8 @@ const { sendOtp } = require('./src/controller/registerController'); // Adjust th
 const app = express();
 const hostname = 'localhost';
 const port = 8000;
+
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

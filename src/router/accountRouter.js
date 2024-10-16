@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/register', register.register);
 router.post('/verify-otp', register.verifyOtp);
 
-router.post('/login', login.login, logLoginHistory); // logLoginHistory should be called after authController.login
+router.post('/login', login.login, logLoginHistory); 
 
 router.get('/login-history', account.getLoginHistory);
 router.get('/login-history/:account_id', account.getLoginHistoryById);

@@ -3,7 +3,6 @@ const company = require('../model/company');
 async function getAllCompanies(req, res) {
     try{
         const companyList = await company.getAllCompanies();
-        console.log('Company List:', companyList);
         return res.json(companyList);
     }catch(err){
         console.error('Error fetching company:', err);
@@ -16,7 +15,6 @@ async function getCompanyById(req, res) {
     console.log(`${id}`)
     try{
         const companyListID = await company.getCompanyById(id);
-        console.log('Company List ID:', companyListID);
         return res.json(companyListID);
     }catch(err){
         console.error('Error fetching companyID:', err);
@@ -40,6 +38,7 @@ async function updateCompanyByID(req,res){
     try{
         const updateCompany = await company.updateCompanyByID({company_id,company_name,company_phonenumber,company_email,company_address});
         res.status(201).send('Company updated successfully');
+        res.body = updateCompany;
     }catch(err){
         console.error('Error updating company:', err);
         res.status(500).send('Error updating company');

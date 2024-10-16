@@ -17,8 +17,15 @@ async function sendOtp(email, otp) {
   const mailOptions = {
     from: process.env.GMAIL_USER,
     to: email,
-    subject: 'Your OTP Code',
-    text: `Your OTP code is ${otp}`,
+    subject: 'HRMS sent you an OTP code',
+    html: `
+    <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+      <h2>Your OTP Code</h2>
+      <p>Please use the following OTP code to complete your registration:</p>
+      <h3 style="color: #2e6c80; font-size: 26px;">${otp}</h3>
+      <p>If you did not request this code, please ignore this email.</p>
+    </div>
+  `,
   };
 
   await transporter.sendMail(mailOptions);

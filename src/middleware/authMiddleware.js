@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const authMiddleware = async (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
-  console.log('Token:', token);
+  // console.log('Token:', token);
 
   if (!token) {
     req.user = { role: 'guest' };
@@ -14,14 +14,14 @@ const authMiddleware = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    console.log('Decoded:', decoded);
+    // console.log('Decoded:', decoded);
     const client = await pool.connect();
 
     try {
       const query = 'SELECT account_role FROM user_account WHERE account_id = $1';
       const values = [decoded.account_id];
       const result = await client.query(query, values);
-      console.log('DB Result:', result.rows);
+      // console.log('DB Result:', result.rows);
 
       req.user = {
         account_id: decoded.account_id,
@@ -40,7 +40,7 @@ const authMiddleware = async (req, res, next) => {
 };
 
 const adminMiddleware = (req, res, next) => {
-  console.log('User:', req.user);
+  // console.log('User:', req.user);
   if (req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Quyền truy cập bị từ chối' });
   }
@@ -48,7 +48,7 @@ const adminMiddleware = (req, res, next) => {
 };
 
 const userMiddleware = (req, res, next) => {
-  console.log('User:', req.user);
+  // console.log('User:', req.user);
   if (req.user.role !== 'admin' && req.user.role !== 'user') {
     return res.status(403).json({ message: 'Quyền truy cập bị từ chối' });
   }

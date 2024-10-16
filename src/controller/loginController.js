@@ -18,7 +18,7 @@ async function login(req, res, next) {
       return res.status(401).send('Invalid username/email or password');
     }
     const secretOrPrivateKey = process.env.SECRET_KEY;
-    const token = jwt.sign({ userId: account.account_id }, secretOrPrivateKey, { expiresIn: '1h' });
+    const token = jwt.sign({ account_id: account.account_id }, secretOrPrivateKey, { expiresIn: '1h' });
 
     // Add account_id to request body for logLoginHistory middleware
     req.body.account_id = account.account_id;

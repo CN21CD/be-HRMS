@@ -19,6 +19,7 @@
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "moment-timezone": "^0.5.45",
+    "nodemailer": "^6.9.15",
     "path": "^0.12.7",
     "pg": "^8.13.0",
     "pg-hstore": "^2.3.4",

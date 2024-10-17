@@ -31,7 +31,7 @@ async function sendOtp(email, otp) {
   await transporter.sendMail(mailOptions);
 }
 
-async function register(req, res) {
+async function registerAdmin(req, res) {
   const { name, email, password, role, company, userinfo } = req.body;
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -63,6 +63,38 @@ async function register(req, res) {
   }
 }
 
+async function registerUser(req, res) {
+  const { name, email, password, role, company_id, userinfo } = req.body;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  try {
+    const client = new Client(config);
+    await client.connect();
+
+    const existingAccountByName = await registerService.getAccountByName(client, name);
+    const existingAccountByEmail = await registerService.getAccountByEmail(client, email);
+
+    await client.end();
+
+    if (existingAccountByName) {
+      return res.status(400).send('Account name already exists');
+    }
+
+    if (existingAccountByEmail) {
+      return res.status(400).send('Email already exists');
+    }
+
+    await redisConnect();
+    const userDetails = { name, email, password, role, company_id, userinfo };
+    await redisClient.set(email, JSON.stringify({ otp, userDetails }), { EX: 300 }); // OTP and user details expire in 5 minutes
+    await sendOtp(email, otp);
+    res.status(200).send('OTP sent to email');
+  } catch (err) {
+    console.error('Error sending OTP:', err);
+    res.status(500).send('Error sending OTP');
+  }
+}
+
 async function verifyOtp(req, res) {
   const { email, otp } = req.body;
 
@@ -79,7 +111,13 @@ async function verifyOtp(req, res) {
     if (storedOtp !== otp) {
       return res.status(400).send('Invalid OTP');
     }
-    await registerService.createAccount(userDetails);
+
+    if (userDetails.role === 'admin') {
+      await registerService.createAdminAccount(userDetails);
+    }else {
+      await registerService.createUserAccount(userDetails);
+    }
+
     res.status(201).send('Account created successfully');
   } catch (err) {
     console.error('Error verifying OTP or creating account:', err);
@@ -88,7 +126,8 @@ async function verifyOtp(req, res) {
 }
 
 module.exports = {
-  register,
+  registerAdmin,
+  registerUser,
   verifyOtp,
   sendOtp,
 };

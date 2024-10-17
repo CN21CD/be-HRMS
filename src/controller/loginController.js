@@ -11,7 +11,6 @@ async function login(req, res, next) {
       console.error('Account not found for identifier:', identifier);
       return res.status(401).send('Invalid username/email or password');
     }
-    console.log('Logged in account:', account);
     const isPasswordValid = await bcrypt.compare(password, account.account_password);
     if (!isPasswordValid) {
       console.error('Invalid password for identifier:', identifier);

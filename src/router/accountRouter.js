@@ -7,7 +7,8 @@ const logLoginHistory = require('../middleware/logLoginHistory');
 
 const router = express.Router();
 
-router.post('/register', register.register);
+router.post('/register', register.registerAdmin);
+router.post('/register-user', register.registerUser);
 router.post('/verify-otp', register.verifyOtp);
 
 router.post('/login', login.login, logLoginHistory); 

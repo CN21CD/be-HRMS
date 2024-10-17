@@ -38,7 +38,7 @@ async function createUserInfo(client, user_fullname, user_birthday, user_email, 
   return res.rows[0].user_id;
 }
 
-async function createAccount(account) {
+async function createAdminAccount(account) {
   const client = new Client(config);
   await client.connect();
 
@@ -101,6 +101,63 @@ async function createAccount(account) {
   }
 }
 
+
+async function createUserAccount(account) {
+  const client = new Client(config);
+  await client.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const existingAccountByName = await getAccountByName(client, account.name);
+    const existingAccountByEmail = await getAccountByEmail(client, account.email);
+
+    if (existingAccountByName) {
+      throw new Error('Account name already exists');
+    }
+
+    if (existingAccountByEmail) {
+      throw new Error('Email already exists');
+    }
+
+    const userinfo_id = await createUserInfo(
+      client,
+      account.userinfo.fullname,
+      account.userinfo.birthday,
+      account.userinfo.email,
+      account.userinfo.address,
+      account.userinfo.phonenumber,
+      account.company_id
+    );
+
+    const hashedPassword = await bcrypt.hash(account.password, 10);
+    const createDate = moment().tz('Asia/Bangkok').format();
+    const query = `
+      INSERT INTO user_account (account_id, account_name, account_email, account_userinfo_id, account_password, account_createDate, account_role)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `;
+    const values = [
+      uuidv4().substring(0, 30),
+      account.name.substring(0, 30),
+      account.email.substring(0, 30),
+      userinfo_id,
+      hashedPassword,
+      createDate,
+      account.role.substring(0, 30)
+    ];
+
+    await client.query(query, values);
+    await client.query('COMMIT');
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error creating user without company:', err);
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
+
 async function getAccountByName(client, name) {
   const query = 'SELECT * FROM user_account WHERE account_name = $1';
   const values = [name];
@@ -130,7 +187,8 @@ async function getAccountByEmail(client, email) {
 module.exports = {
   createCompany,
   createUserInfo,
-  createAccount,
+  createAdminAccount,
+  createUserAccount,
   getAccountByName,
   getAccountByEmail,
 };

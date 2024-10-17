@@ -47,6 +47,9 @@ app.get('/api', (req, res) => {
   res.json({ message: 'Welcome HRMS API by XiamTeam' });
 });
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+// app.listen(port, hostname, () => {
+//   console.log(`Server running at http://${hostname}:${port}/`);
+// });
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server is running on port ${port}`);
 });

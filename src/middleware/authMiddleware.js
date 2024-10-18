@@ -1,6 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { pool } = require('../../config/dbconfig');
-
 require('dotenv').config();
 
 const authMiddleware = async (req, res, next) => {
@@ -15,21 +13,12 @@ const authMiddleware = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     // console.log('Decoded:', decoded);
-    const client = await pool.connect();
 
-    try {
-      const query = 'SELECT account_role FROM user_account WHERE account_id = $1';
-      const values = [decoded.account_id];
-      const result = await client.query(query, values);
-      // console.log('DB Result:', result.rows);
-
-      req.user = {
-        account_id: decoded.account_id,
-        role: result.rows.length ? result.rows[0].account_role : 'guest'
-      };
-    } finally {
-      client.release();
-    }
+    req.user = {
+      account_id: decoded.account_id,
+      role: decoded.role,
+      company_id: decoded.company_id
+    };
 
     next();
   } catch (error) {
@@ -54,5 +43,13 @@ const userMiddleware = (req, res, next) => {
   }
   next();
 };
+const companyMiddleware = (req, res, next) => {
+  const companyId = req.header('Company_ID');
+  console.log('companyId:', companyId);
+  if (!companyId || req.user.company_id !== companyId) {
+    return res.status(403).json({ message: 'Quyền truy cập bị từ chối' });
+  }
+  next();
+};
 
-module.exports = { authMiddleware, adminMiddleware, userMiddleware };
+module.exports = { authMiddleware, adminMiddleware, userMiddleware, companyMiddleware };

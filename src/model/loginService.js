@@ -5,7 +5,12 @@ async function getAccountByEmailOrUsername(identifier) {
   const client = new Client(config);
   await client.connect();
 
-  const query = 'SELECT * FROM user_account WHERE account_email = $1 OR account_name = $2';
+  const query = `
+    SELECT ua.*, ui.user_company_id AS company_id
+    FROM user_account ua
+    JOIN users_infomation ui ON ua.account_userinfo_id = ui.user_id
+    WHERE ua.account_email = $1 OR ua.account_name = $2
+  `;
   const values = [identifier, identifier];
 
   try {

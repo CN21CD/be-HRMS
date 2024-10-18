@@ -1,8 +1,10 @@
 const company = require('../model/company');
 
 async function getAllCompanies(req, res) {
+    const company_id = req.headers['company_id'] || req.headers['Company_ID'];
+
     try{
-        const companyList = await company.getAllCompanies();
+        const companyList = await company.getAllCompanies(company_id);
         return res.json(companyList);
     }catch(err){
         console.error('Error fetching company:', err);
@@ -10,17 +12,17 @@ async function getAllCompanies(req, res) {
     }
 }
 
-async function getCompanyById(req, res) {
-    const id = req.params.id;
-    console.log(`${id}`)
-    try{
-        const companyListID = await company.getCompanyById(id);
-        return res.json(companyListID);
-    }catch(err){
-        console.error('Error fetching companyID:', err);
-        return res.status(500).send('Error fetching companyID');
-    }
-}
+// async function getCompanyById(req, res) {
+//     const id = req.params.id;
+//     console.log(`${id}`)
+//     try{
+//         const companyListID = await company.getCompanyById(id);
+//         return res.json(companyListID);
+//     }catch(err){
+//         console.error('Error fetching companyID:', err);
+//         return res.status(500).send('Error fetching companyID');
+//     }
+// }
 // async function addCompany(req,res){
 //     const {company_name,company_phonenumber,company_email,company_address} = req.body;
 //     try{
@@ -33,7 +35,7 @@ async function getCompanyById(req, res) {
 //     }
 // }
 async function updateCompanyByID(req,res){
-    const company_id = req.params.id;
+    const company_id = req.headers['company_id'] || req.headers['Company_ID'];
     const {company_name,company_phonenumber,company_email,company_address} = req.body;
     try{
         const updateCompany = await company.updateCompanyByID({company_id,company_name,company_phonenumber,company_email,company_address});
@@ -57,7 +59,7 @@ async function updateCompanyByID(req,res){
 
 module.exports = {
     getAllCompanies,
-    getCompanyById,
+    // getCompanyById,
     // addCompany,
     updateCompanyByID,
     // deleteCompanyByID

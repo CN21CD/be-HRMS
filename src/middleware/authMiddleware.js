@@ -19,7 +19,7 @@ const authMiddleware = async (req, res, next) => {
       role: decoded.role,
       company_id: decoded.company_id
     };
-
+    console.log('company_id from token:', req.user.company_id);
     next();
   } catch (error) {
     console.error('Error:', error);
@@ -46,8 +46,8 @@ const userMiddleware = (req, res, next) => {
 const companyMiddleware = (req, res, next) => {
   const companyId = req.header('Company_ID');
   console.log('companyId:', companyId);
-  if (!companyId || req.user.company_id !== companyId) {
-    return res.status(403).json({ message: 'Quyền truy cập bị từ chối' });
+  if (parseInt(req.user.company_id, 10) !== parseInt(companyId, 10)) {
+    return res.status(403).json({ message: 'Quyền truy cập công ty bị từ chối' });
   }
   next();
 };

@@ -19,8 +19,8 @@ async function login(req, res, next) {
     const secretOrPrivateKey = process.env.SECRET_KEY;
     const tokenPayload = {
       account_id: account.account_id,
-      role: account.account_role, // Assuming account_role is a property of account
-      company_id: account.company_id // Assuming company_id is a property of account
+      role: account.account_role, 
+      company_id: account.company_id 
     };
     const token = jwt.sign(tokenPayload, secretOrPrivateKey, { expiresIn: '1h' });
 

@@ -76,7 +76,6 @@ async function createAdminAccount(account) {
 
     const hashedPassword = await bcrypt.hash(account.password, 10);
     const createDate = moment().tz('Asia/Bangkok').format();
-    const role = 'admin';
     const query = `
       INSERT INTO user_account (account_id, account_name, account_email, account_userinfo_id, account_password, account_createDate, account_role)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -89,7 +88,7 @@ async function createAdminAccount(account) {
       userinfo_id,
       hashedPassword,
       createDate,
-      role
+      account.role.substring(0, 30)
     ];
 
     await client.query(query, values);

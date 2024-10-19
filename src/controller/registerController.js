@@ -64,7 +64,7 @@ async function registerAdmin(req, res) {
 }
 
 async function registerUser(req, res) {
-  const { name, email, password, role, company_id, userinfo } = req.body;
+  const { name, email, password, company_id, userinfo } = req.body;
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
@@ -85,7 +85,7 @@ async function registerUser(req, res) {
     }
 
     await redisConnect();
-    const userDetails = { name, email, password, role, company_id, userinfo };
+    const userDetails = { name, email, password, company_id, userinfo };
     await redisClient.set(email, JSON.stringify({ otp, userDetails }), { EX: 300 }); // OTP and user details expire in 5 minutes
     await sendOtp(email, otp);
     res.status(200).send('OTP sent to email');

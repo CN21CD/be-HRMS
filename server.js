@@ -27,22 +27,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/data', companyRouter);
 app.use('/api/data', userRouter);
 
-app.post('/send-otp', async (req, res) => {
-  const { email, otp } = req.body;
-
-  try {
-    await sendOtp(email, otp);
-    res.json({ message: 'OTP sent successfully' });
-  } catch (error) {
-    console.error('Error sending OTP:', error);
-    res.status(500).json({ message: 'Error sending OTP' });
-  }
-});
-
-app.get('/send-otp-form', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sentOTP.html'));
-});
-
 app.get('/api', (req, res) => {
   res.json({ message: 'Welcome HRMS API by XiamTeam' });
 });

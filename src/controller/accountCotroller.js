@@ -21,7 +21,6 @@ async function getLoginHistoryById(req, res) {
     res.status(500).send('Error fetching login history');
   }
 }
-
 async function deleteAccount(req, res) {
   const { account_id } = req.params;
   try {
@@ -32,9 +31,20 @@ async function deleteAccount(req, res) {
     res.status(500).send('Error deleting account');
   }
 }
+async function deleteUserAccount(req, res) {
+  const { account_id } = req.params;
+  try {
+    await accountService.deleteAccount(account_id);
+    res.status(200).send('Account User deleted successfully');
+  } catch (err) {
+    console.error('Error deleting account:', err);
+    res.status(500).send('Error deleting account');
+  }
+}
 
 module.exports = {
   getLoginHistory,
   getLoginHistoryById,
   deleteAccount,
+  deleteUserAccount
 };

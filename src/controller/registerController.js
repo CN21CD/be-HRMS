@@ -132,12 +132,14 @@ async function resendOtp(req, res) {
   try {
     await redisConnect();
     const storedData = await redisClient.get(email);
-
+    // console.log(storedData);
+    
     if (!storedData) {
       return res.status(400).send('User not found');
     }
 
     const { userDetails } = JSON.parse(storedData);
+    // console.log(userDetails);
     await redisClient.set(email, JSON.stringify({ otp, userDetails }), { EX: 300 });
     await sendOtp(email, otp);
     res.status(200).send('OTP resent to email');

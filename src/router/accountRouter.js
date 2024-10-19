@@ -10,6 +10,8 @@ const router = express.Router();
 router.post('/register', register.registerAdmin);
 router.post('/register-user', register.registerUser);
 router.post('/verify-otp', register.verifyOtp);
+router.post('/resend-otp', register.resendOtp);
+
 
 router.post('/login', login.login, logLoginHistory); 
 

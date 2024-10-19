@@ -125,9 +125,32 @@ async function verifyOtp(req, res) {
   }
 }
 
+async function resendOtp(req, res) {
+  const { email } = req.body;
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  try {
+    await redisConnect();
+    const storedData = await redisClient.get(email);
+
+    if (!storedData) {
+      return res.status(400).send('User not found');
+    }
+
+    const { userDetails } = JSON.parse(storedData);
+    await redisClient.set(email, JSON.stringify({ otp, userDetails }), { EX: 300 });
+    await sendOtp(email, otp);
+    res.status(200).send('OTP resent to email');
+  } catch (err) {
+    console.error('Error resending OTP:', err);
+    res.status(500).send('Error resending OTP');
+  }
+}
+
 module.exports = {
   registerAdmin,
   registerUser,
   verifyOtp,
   sendOtp,
+  resendOtp
 };

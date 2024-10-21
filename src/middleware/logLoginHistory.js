@@ -8,7 +8,10 @@ async function logLoginHistory(req, res, next) {
   await client.connect();
 
   const { account_id } = req.body;
-  const ip_address = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  let ip_address = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  if (ip_address && ip_address.includes(',')) {
+    ip_address = ip_address.split(',')[0].trim();
+  }
   const login_time = moment().tz('Asia/Bangkok').format();
   console.log('ip_address login to system', ip_address);
   

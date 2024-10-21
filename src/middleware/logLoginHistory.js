@@ -8,8 +8,10 @@ async function logLoginHistory(req, res, next) {
   await client.connect();
 
   const { account_id } = req.body;
-  const ip_address = req.ip;
+  const ip_address = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const login_time = moment().tz('Asia/Bangkok').format();
+  console.log('ip_address login to system', ip_address);
+  
   const id = uuidv4().replace(/-/g, '').substring(0, 30);
   if (!account_id) {
     console.error('account_id is missing in the request body');

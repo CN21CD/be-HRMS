@@ -22,7 +22,7 @@ async function login(req, res, next) {
       role: account.account_role, 
       company_id: account.company_id 
     };
-    const token = jwt.sign(tokenPayload, secretOrPrivateKey, { expiresIn: '1h' });
+    const token = jwt.sign(tokenPayload, secretOrPrivateKey, { expiresIn: '2h' });
 
     // Add account_id to request body for logLoginHistory middleware
     req.body.account_id = account.account_id;
